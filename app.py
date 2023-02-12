@@ -47,10 +47,10 @@ async def create_new_profile(request:Request):
 @app.get("/data",status_code=201)
 async def get_all_tank_by_data():
     tank_route_object= await db["tank_data"].find().to_list(999)
-    if len(tank_route_object) < 1:
-        return {}
-    return tank_route_object[0]
-   # return tank_route_object
+    #if len(tank_route_object) < 1:
+        #return {}
+   # return tank_route_object[0]
+    return tank_route_object
 
 @app.post("/data",status_code=201)
 async def create_new_tank_route(request:Request):
@@ -62,7 +62,7 @@ async def create_new_tank_route(request:Request):
     return created_route
 
 @app.patch("/data/{id}")
-async def update_data_by_id(id:int, request:Request):
+async def update_data_by_id(id:str, request:Request):
     data_update= await request.json()
     for data in db:
         if id==data['id']:
@@ -70,8 +70,8 @@ async def update_data_by_id(id:int, request:Request):
             return data
         
 @app.delete("/data/{id}")
-async def delte_data_by_id(id:int):
-    data_delete= await db["tank_data"].delete_one({"_id":id})
+async def delete_data_by_id(id:str):
+    data_delete= await db["tank_data"].delete_one({"_id":ObjectId(id)})
     if data_delete.deleted_count == 1:
         return Response(status_code=status.HTTP_204_NO_CONTENT)
 
