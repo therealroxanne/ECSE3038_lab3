@@ -61,14 +61,24 @@ async def create_new_tank_route(request:Request):
 
     return created_route
 
-@app.patch("/data/{id}")
+"""@app.patch("/data/{id}")
 async def update_data_by_id(id:str, request:Request):
     data_update= await request.json()
-    for data in db:
-        if id==data['id']:
-            data.update_one(data_update)
-            return data
-        
+    for tank_objects in db:
+        if id==tank_objects["id"]:
+            index=db.index(tank_objects)
+            db[index]["location"]=data_update["location"]
+            return db[index]"""
+@app.patch("/data/{id}")
+async def update_tank(id: str, request: Request):
+    data_update = await request.json()
+    updatetank = await db["tank_data"].update_one({"_id": ObjectId(id)},{'$set': data_update})
+    tank_status = await db["tank_data"].find_one({"_id": ObjectId(id)})
+    if updatetank.modified_count==1:
+        if tank_status is not None:
+            return tank_status
+    else:
+        raise HTTPException(status_code=304,detail="Item not modified")
 @app.delete("/data/{id}")
 async def delete_data_by_id(id:str):
     data_delete= await db["tank_data"].delete_one({"_id":ObjectId(id)})
