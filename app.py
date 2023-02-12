@@ -40,7 +40,7 @@ async def create_new_profile(request:Request):
     profile_object["last_updated"]=datetime.now()
 
     new_profile= await db["profile"].insert_one(profile_object)
-    created_profile= await db["profile"].find_one({"_id":new_profile.insert_id})
+    created_profile= await db["profile"].find_one({"_id":new_profile.inserted_id})
 
     return created_profile
 
@@ -57,7 +57,7 @@ async def create_new_tank_route(request:Request):
     tank_objects= await request.json()
 
     new_tank_route= await db["tank_data"].insert_one(tank_objects)
-    created_route= await db["tank_data"].find_one({"_id":new_tank_route.insert_id})
+    created_route= await db["tank_data"].find_one({"_id":new_tank_route.inserted_id})
 
     return created_route
 
@@ -75,7 +75,7 @@ async def delte_data_by_id(id:int):
     if data_delete.deleted_count == 1:
         return Response(status_code=status.HTTP_204_NO_CONTENT)
 
-    raise HTTPException(status_code=404, detail=f"Student {id} not found")
+    raise HTTPException(status_code=404, detail="Item not found")
 
 
     
